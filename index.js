@@ -8,8 +8,8 @@ module.exports = function objectToXML(obj, namespace, depth) {
 	
 	map(obj, function (key, value) {
 		var attributes = '';
-		
-		if (value && (value.hasOwnProperty('@') || value.hasOwnProperty('#'))) {
+		var isFlatten = false;	
+		if (value && (value.hasOwnProperty('@') || value.hasOwnProperty('#') || value.hasOwnProperty('$'))) {
 			attributes = map(value['@'], function (key, value) {
 				if (value && value.constructor.name == 'Date') {
 					return key + '="' + fixupDate(value) + '"';
@@ -18,18 +18,24 @@ module.exports = function objectToXML(obj, namespace, depth) {
 					return key + '="' + sanitizer.escape(value) + '"';
 				}
 			}, true).join(' ');
-			
-			value = value['#'];
+			isFlatten = value.hasOwnProperty('$')
+			value = value.hasOwnProperty('#') ? value['#'] : value['$'];
 		}
 		
 		if (Array.isArray(value)) {
-			map(value, function (ix, value) {
-				var tmp = {};
-				
-				tmp[key] = value;
-				
-				xml.push(objectToXML(tmp, namespace, depth));
-			});
+				if (isFlatten) {
+					xml.push('<' + ((namespace) ? namespace + ':' : '') + key + ((attributes) ? ' ' + attributes : '') + '>\n')
+					map(value, function(ix, value) {
+						xml.push(objectToXML(value, namespace, depth))
+					})
+					xml.push('</' + ((namespace) ? namespace + ':' : '') + key.split(/\ /)[0] + '>\n')
+				}
+				else { map(value, function (ix, value) {
+					var tmp = {};
+					tmp[key] = value;
+
+					xml.push(objectToXML(tmp, namespace, depth));
+				}); }
 		}
 		else if (value === null || value === undefined) {
 			for (var x = 0; x < depth; x++) {

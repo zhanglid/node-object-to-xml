@@ -32,6 +32,12 @@ var obj = {
         name : 'linux'
       }
     }
+  },
+  flatten: {
+    '$' : [
+        {name: 'a', value: 1},
+        {name: 'b', value: 2}
+      ]
   }
 };
 
@@ -45,6 +51,12 @@ console.log(o2x(obj));
     <name>linux</name>
   </query>
 </request>
+<flatten>
+<name>a</name>
+<value>1</value>
+<name>b</name>
+<value>2</value>
+</flatten>
 */
 ```
 

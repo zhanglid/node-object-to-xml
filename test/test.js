@@ -36,6 +36,12 @@ exports["basic test"] = function (test) {
 			}
 			, "#" : "value"
 		}
+		, z : {
+			"$": [{a: undefined}, {a: 1}, {b: 1}]
+		}
+		, k: {
+			"#" : [{a: undefined}, {b: undefined}]
+		}
 	});
 
 	var expect = ''
@@ -54,8 +60,17 @@ exports["basic test"] = function (test) {
 		+ '<h>&lt;!asdf&amp;</h>\n'
 		+ '<i numeric="42" />\n'
 		+ '<j numeric="42">value</j>\n'
+		+ '<z><a />\n'
+		+ '<a>1</a>\n'
+		+ '<b>1</b>\n'
+		+ '</z>\n'
+		+ '<k>\n'
+		+ '  <a />\n'
+		+ '</k>\n'
+		+ '<k>\n'
+		+ '  <b />\n'
+		+ '</k>\n'
 		;
-
 	test.equal(expect, str);
 	test.done();
 }
